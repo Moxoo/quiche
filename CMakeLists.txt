@@ -384,7 +384,7 @@ TARGET_LINK_LIBRARIES(quiche
 
 if (ENABLE_LINK_TCMALLOC)
     TARGET_LINK_LIBRARIES(quiche
-        libtcmalloc_minimal.a
+        libtcmalloc_minimal.so
 )
 endif()
 
