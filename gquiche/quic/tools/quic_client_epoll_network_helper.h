@@ -65,6 +65,8 @@ class QuicClientEpollNetworkHelper : public QuicClientBase::NetworkHelper,
   bool CreateUDPSocketAndBind(QuicSocketAddress server_address,
                               QuicIpAddress bind_to_address,
                               int bind_to_port) override;
+
+  int SendUdpPacket(const char *msg, QuicSocketAddress server_addr, QuicIpAddress self_ip) override;
   void CleanUpAllUDPSockets() override;
   QuicSocketAddress GetLatestClientAddress() const override;
   QuicPacketWriter* CreateQuicPacketWriter() override;
@@ -127,6 +129,7 @@ class QuicClientEpollNetworkHelper : public QuicClientBase::NetworkHelper,
   QuicClientBase* client_;
 
   int max_reads_per_epoll_loop_;
+  int fd;
 };
 
 }  // namespace quic

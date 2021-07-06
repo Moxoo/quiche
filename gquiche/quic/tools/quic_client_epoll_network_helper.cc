@@ -60,7 +60,7 @@ bool QuicClientEpollNetworkHelper::CreateUDPSocketAndBind(
     int bind_to_port) {
   epoll_server_->set_timeout_in_us(50 * 1000);
 
-  int fd = CreateUDPSocket(server_address, &overflow_supported_);
+  fd = CreateUDPSocket(server_address, &overflow_supported_);
   if (fd < 0) {
     return false;
   }
@@ -109,6 +109,19 @@ bool QuicClientEpollNetworkHelper::CreateUDPSocketAndBind(
   fd_address_map_[fd] = client_address;
   epoll_server_->RegisterFD(fd, this, kEpollFlags);
   return true;
+}
+
+int QuicClientEpollNetworkHelper::SendUdpPacket(const char *msg, QuicSocketAddress server_addr, QuicIpAddress self_ip) {
+  QuicUdpSocketApi api;
+  QuicUdpPacketInfo info;
+  info.SetPeerAddress(server_addr);
+  info.SetSelfIp(self_ip);
+  WriteResult wr = api.WritePacket(fd, (const char *)msg, strlen(msg), info);
+  WriteStatus ws = wr.status;
+  if(ws == WRITE_STATUS_OK){
+    return wr.bytes_written;
+  }
+    return 0;
 }
 
 void QuicClientEpollNetworkHelper::CleanUpUDPSocket(int fd) {

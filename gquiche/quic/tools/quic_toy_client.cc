@@ -414,7 +414,7 @@ int QuicToyClient::SendRequestsAndPrintResponses(
 
     int response_code = client->latest_response_code();
     if (response_code >= 200 && response_code < 300) {
-      std::cout << "Request succeeded (" << response_code << ")." << std::endl;
+      std::cout << "Request succeeded succeeded succeeded(" << response_code << ")." << std::endl;
     } else if (response_code >= 300 && response_code < 400) {
       if (GetQuicFlag(FLAGS_redirect_is_success)) {
         std::cout << "Request succeeded (redirect " << response_code << ")."
@@ -438,6 +438,13 @@ int QuicToyClient::SendRequestsAndPrintResponses(
     }
   }
 
+  // Send echo packet to server
+  char const *hello = "bilibili Cheers!";
+  int valSend;
+  if ((valSend = client->ToSend(hello)) <= 0) {
+    perror("send failed");
+  }
+  std::cout << "client send " << valSend << " bytes to server." << std::endl;
   return 0;
 }
 

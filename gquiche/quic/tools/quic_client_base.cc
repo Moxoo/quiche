@@ -200,6 +200,12 @@ void QuicClientBase::StartConnect() {
   set_connected_or_attempting_connect(true);
 }
 
+int QuicClientBase::ToSend(const char *msg) {
+  int n;
+  n = network_helper_->SendUdpPacket(msg, server_address(), bind_to_address());
+  return n;
+}
+
 void QuicClientBase::InitializeSession() {
   session()->Initialize();
 }

@@ -49,6 +49,9 @@ class QuicClientBase {
                                         QuicIpAddress bind_to_address,
                                         int bind_to_port) = 0;
 
+    // send udp packet
+    virtual int SendUdpPacket(const char *msg, QuicSocketAddress server_addr, QuicIpAddress self_ip) = 0;
+
     // Unregister and close all open UDP sockets.
     virtual void CleanUpAllUDPSockets() = 0;
 
@@ -86,6 +89,8 @@ class QuicClientBase {
   // Connect(), but callers are responsible for making sure the crypto handshake
   // completes.
   void StartConnect();
+
+  int ToSend(const char *msg);
 
   // Calls session()->Initialize(). Subclasses may override this if any extra
   // initialization needs to be done. Subclasses should expect that session()
