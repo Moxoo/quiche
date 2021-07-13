@@ -13,6 +13,13 @@
 #include "gquiche/quic/tools/quic_epoll_server_factory.h"
 #include "gquiche/quic/tools/quic_toy_server.h"
 
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+DEFINE_QUIC_COMMAND_LINE_FLAG(int32_t,
+                              verbosity,
+                              0,
+                              "The verbosity will be set.");
+
 int main(int argc, char* argv[]) {
   QuicSystemEventLoop event_loop("quic_server");
   const char* usage = "Usage: quic_server [options]";
@@ -22,6 +29,10 @@ int main(int argc, char* argv[]) {
     quic::QuicPrintCommandLineFlagHelp(usage);
     exit(0);
   }
+  
+  auto logger = spdlog::stdout_color_mt("quic-server");
+  quiche::GetLogger().swap(*logger);
+  quiche::SetVerbosityLogThreshold(GetQuicFlag(FLAGS_verbosity));
 
   quic::QuicToyServer::MemoryCacheBackendFactory backend_factory;
   quic::QuicEpollServerFactory server_factory;
