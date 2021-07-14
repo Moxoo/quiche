@@ -147,12 +147,18 @@ const QuicBackendResponse* QuicMemoryCacheBackend::GetResponse(
   if (it == responses_.end()) {
     uint64_t ignored = 0;
     if (generate_bytes_response_) {
-      if (absl::SimpleAtoi(absl::string_view(path.data() + 1, path.size() - 1),
-                           &ignored)) {
-        // The actual parsed length is ignored here and will be recomputed
-        // by the caller.
-        return generate_bytes_response_.get();
-      }
+
+      // Do not convert a string to an integer
+      // ------
+      // if (absl::SimpleAtoi(absl::string_view(path.data() + 1, path.size() - 1),
+      //                      &ignored)) {
+      //   // The actual parsed length is ignored here and will be recomputed
+      //   // by the caller.
+      //   return generate_bytes_response_.get();
+      // }
+      // ------
+
+      return generate_bytes_response_.get();
     }
     QUIC_DVLOG(1) << "Get response for resource failed: host " << host
                   << " path " << path;
@@ -325,6 +331,9 @@ void QuicMemoryCacheBackend::FetchResponseFromBackend(
   // Find response in cache. If not found, send error response.
   auto authority = request_headers.find(":authority");
   auto path = request_headers.find(":path");
+  std::cout << "----------" << std::endl;
+  std::cout << "authority: " << authority->second << std::endl;
+  std::cout << "path: " << path->second << std::endl;
   if (authority != request_headers.end() && path != request_headers.end()) {
     quic_response = GetResponse(authority->second, path->second);
   }

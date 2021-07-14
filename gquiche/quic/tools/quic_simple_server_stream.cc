@@ -305,11 +305,18 @@ void QuicSimpleServerStream::OnResponseBackendComplete(
   if (response->response_type() == QuicBackendResponse::GENERATE_BYTES) {
     QUIC_DVLOG(1) << "Stream " << id() << " sending a generate bytes response.";
     std::string path = request_headers_[":path"].as_string().substr(1);
-    if (!absl::SimpleAtoi(path, &generate_bytes_length_)) {
-      QUIC_LOG(ERROR) << "Path is not a number.";
-      SendNotFoundResponse();
-      return;
-    }
+    std::cout  << "echo msg: " << path << std::endl;
+
+    // Do not convert a string to an integer
+    // ------
+    // if (!absl::SimpleAtoi(path, &generate_bytes_length_)) {
+    //   std::cout  << "generate_bytes_length_:" << generate_bytes_length_ << std::endl;
+    //   QUIC_LOG(ERROR) << "Path is not a number.";
+    //   SendNotFoundResponse();
+    //   return;
+    // }
+    // ------
+
     Http2HeaderBlock headers = response->headers().Clone();
     headers["content-length"] = absl::StrCat(generate_bytes_length_);
 
@@ -317,7 +324,9 @@ void QuicSimpleServerStream::OnResponseBackendComplete(
     QUICHE_DCHECK(!response_sent_);
     response_sent_ = true;
 
-    WriteGeneratedBytes();
+    // WriteGeneratedBytes();
+    // Send echo 'path' to client
+    WriteGeneratedEcho(path);
 
     return;
   }
@@ -343,11 +352,20 @@ void QuicSimpleServerStream::WriteGeneratedBytes() {
   }
 }
 
+void QuicSimpleServerStream::WriteGeneratedEcho(std::string path) {
+  std::cout << "To echo." <<std::endl;
+  if(!HasBufferedData()) {
+    WriteOrBufferBody(path, true);
+  }
+}
+
 void QuicSimpleServerStream::SendNotFoundResponse() {
   QUIC_DVLOG(1) << "Stream " << id() << " sending not found response.";
   Http2HeaderBlock headers;
   headers[":status"] = "404";
   headers["content-length"] = absl::StrCat(strlen(kNotFoundResponseBody));
+  headers["msg"] = request_headers_[":authority"].as_string() +
+                            request_headers_[":path"].as_string();
   SendHeadersAndBody(std::move(headers), kNotFoundResponseBody);
 }
 

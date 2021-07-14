@@ -203,6 +203,22 @@ void QuicServer::OnEvent(int fd, QuicEpollEvent* event) {
       more_to_read = packet_reader_->ReadAndDispatchPackets(
           fd_, port_, QuicEpollClock(&epoll_server_), dispatcher_.get(),
           overflow_supported_ ? &packets_dropped_ : nullptr);
+
+      // QuicUdpSocketApi api;
+      // BitMask64 packet_info_interested(QuicUdpPacketInfoBit::PEER_ADDRESS);
+      // char packet_buffer[kMaxIncomingPacketSize];
+      // char control_buffer[kDefaultUdpPacketControlBufferSize];
+      // QuicUdpSocketApi::ReadPacketResult read_result;
+      // read_result.packet_buffer = {packet_buffer, sizeof(packet_buffer)};
+      // read_result.control_buffer = {control_buffer, sizeof(control_buffer)};
+      // api.ReadPacket(fd, packet_info_interested, &read_result);
+      // // read_result.packet_buffer.buffer[read_result.packet_buffer.buffer_len] = '\0';
+      // // auto msg =  absl::string_view(read_result.packet_buffer.buffer, read_result.packet_buffer.buffer_len);
+      // if(read_result.ok) {
+      //   std::cout << "server recv '" << read_result.packet_buffer.buffer << "' " << read_result.packet_buffer.buffer_len << " bytes from client" << std::endl;
+      // }else{
+      //   std::cout << "server recv faild: " << read_result.packet_buffer.buffer_len << std::endl;
+      // }
     }
 
     if (dispatcher_->HasChlosBuffered()) {

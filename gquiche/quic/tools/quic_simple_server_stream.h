@@ -92,6 +92,9 @@ class QuicSimpleServerStream : public QuicSpdyServerStreamBase,
   // Writes the body bytes for the GENERATE_BYTES response type.
   void WriteGeneratedBytes();
 
+  // Writes 'echo' in the body for the response.
+  void WriteGeneratedEcho(std::string path);
+
   // The parsed headers received from the client.
   spdy::Http2HeaderBlock request_headers_;
   int64_t content_length_;

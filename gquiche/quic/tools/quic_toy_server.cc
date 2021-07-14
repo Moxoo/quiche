@@ -29,7 +29,7 @@ DEFINE_QUIC_COMMAND_LINE_FLAG(
 DEFINE_QUIC_COMMAND_LINE_FLAG(
     bool,
     generate_dynamic_responses,
-    false,
+    true,
     "If true, then URLs which have a numeric path will send a dynamically "
     "generated response of that many bytes.");
 
